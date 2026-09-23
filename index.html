@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xford Project</title>
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.css"
+        integrity="sha512-x9WwyMYBnlXMNQ6kQ/Lyzu1NqIhLQKL5Oq6xByfXuRj7s9CskyCbLv/1IjqzJmXwFXWr0ov6jBV7Qbc0hh9nHg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.rtl.min.css"
+        integrity="sha384-gXt9imSW0VcJVHezoNQsP+TNrjYXoGcrqBZJpry9zJt8PCQjobwmhMGaDHTASo9N" crossorigin="anonymous">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Zain:ital,wght@0,200;0,300;0,400;0,700;0,800;0,900;1,300;1,400&display=swap"
+        rel="stylesheet">
+    <!-- Link Swiper's CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@14.0.1/swiper-bundle.min.css" />
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Demo styles -->
+    <style>
+        .swiper {
+            width: 100%;
+            padding-top: 50px;
+            padding-bottom: 50px;
+        }
+
+        .swiper-slide {
+            background-position: center;
+            background-size: cover;
+            width: 300px;
+            height: 300px;
+        }
+
+        .swiper-slide img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+
+    <style>
+        /* ================================
+   Chatbot
+================================ */
+
+        .chatbot {
+            position: fixed;
+            right: 25px;
+            bottom: 25px;
+            z-index: 9999;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Toggle Button */
+
+        .chatbot-toggle {
+            width: 60px;
+            height: 60px;
+            border: 0;
+            border-radius: 50%;
+            background: #111827;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+            transition: 0.25s ease;
+        }
+
+        .chatbot-toggle:hover {
+            transform: translateY(-3px);
+        }
+
+        .chatbot-toggle-icon {
+            font-size: 25px;
+            line-height: 1;
+        }
+
+        /* Popup */
+
+        .chatbot-popup {
+            position: absolute;
+            right: 0;
+            bottom: 75px;
+
+            width: 360px;
+            height: 520px;
+
+            background: #fff;
+            border-radius: 18px;
+            overflow: hidden;
+
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+
+            display: flex;
+            flex-direction: column;
+
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(15px) scale(0.97);
+
+            transition:
+                opacity 0.25s ease,
+                visibility 0.25s ease,
+                transform 0.25s ease;
+        }
+
+        .chatbot-popup.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        /* Header */
+
+        .chatbot-header {
+            min-height: 70px;
+            padding: 14px 16px;
+
+            background: #111827;
+            color: #fff;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chatbot-header-info {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .chatbot-avatar {
+            width: 42px;
+            height: 42px;
+
+            border-radius: 50%;
+            background: #fff;
+            color: #111827;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .chatbot-header h3 {
+            margin: 0 0 3px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .chatbot-header span {
+            font-size: 12px;
+            opacity: 0.75;
+        }
+
+        .chatbot-close {
+            width: 32px;
+            height: 32px;
+
+            border: 0;
+            background: transparent;
+            color: #fff;
+
+            font-size: 27px;
+            line-height: 1;
+
+            cursor: pointer;
+            opacity: 0.8;
+        }
+
+        .chatbot-close:hover {
+            opacity: 1;
+        }
+
+        /* Messages */
+
+        .chatbot-messages {
+            flex: 1;
+
+            padding: 18px;
+
+            overflow-y: auto;
+
+            background: #f8fafc;
+
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chatbot-message {
+            display: flex;
+        }
+
+        .chatbot-message-bot {
+            justify-content: flex-start;
+        }
+
+        .chatbot-message-user {
+            justify-content: flex-end;
+        }
+
+        .chatbot-message-content {
+            max-width: 80%;
+
+            padding: 10px 13px;
+
+            border-radius: 14px;
+
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .chatbot-message-bot .chatbot-message-content {
+            background: #fff;
+            color: #1f2937;
+            border: 1px solid #e5e7eb;
+            border-bottom-left-radius: 4px;
+        }
+
+        .chatbot-message-user .chatbot-message-content {
+            background: #111827;
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+
+        /* Form */
+
+        .chatbot-form {
+            padding: 12px;
+
+            background: #fff;
+            border-top: 1px solid #e5e7eb;
+
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chatbot-input {
+            flex: 1;
+
+            height: 44px;
+
+            padding: 0 13px;
+
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+
+            outline: none;
+
+            font-size: 14px;
+        }
+
+        .chatbot-input:focus {
+            border-color: #9ca3af;
+        }
+
+        .chatbot-send {
+            width: 44px;
+            height: 44px;
+
+            border: 0;
+            border-radius: 10px;
+
+            background: #111827;
+            color: #fff;
+
+            cursor: pointer;
+
+            font-size: 18px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            transition: 0.2s ease;
+        }
+
+        .chatbot-send:hover {
+            transform: translateY(-1px);
+        }
+
+        /* Mobile */
+
+        @media (max-width: 576px) {
+
+            .chatbot {
+                right: 15px;
+                bottom: 15px;
+            }
+
+            .chatbot-popup {
+                right: 0;
+                bottom: 70px;
+
+                width: calc(100vw - 30px);
+                height: min(520px, calc(100vh - 100px));
+            }
+
+            .chatbot-toggle {
+                width: 55px;
+                height: 55px;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- navbar  -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="images/logo.png" alt="">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">الرئيسية</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">من نحن</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            الكورسات
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#"> كورس البرمجة </a></li>
+                            <li><a class="dropdown-item" href="#"> كورس الانجليزى </a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"> تواصل معنا </a>
+                    </li>
+                </ul>
+                <button type="button" class="btn btn-dark"> اشترك الأن </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- header  -->
+    <section class="header text-center">
+        <div class="container">
+            <h6> تعلّم بلا حدود </h6>
+            <h1 class="my-4"> أكاديمية اكسفورد تعلّم اليوم… لتصنع نجاح الغد </h1>
+            <p> طوّر مهاراتك واكتسب خبرات جديدة من خلال مجموعة متنوعة من الدورات التدريبية التي يقدمها نخبة من الخبراء
+                والمحترفين. </p>
+            <a href="#" class="btn btn-dark mt-4"> استكشف الكورسات </a>
+        </div>
+    </section>
+
+    <!-- about us  -->
+    <section class="about-us section-padding">
+        <div class="container">
+            <h6 class="sub-title mb-4"> من نحن </h6>
+            <h2> في أكسفورد، نؤمن أن التعليم الحقيقي لا يقتصر على حفظ المعلومات، بل يبدأ بفهمها وتطبيقها وبناء مهارات
+                تدوم معك، لذلك نقدم تجربة تعليمية حديثة تجمع بين المعرفة والتطبيق، لنساعدك على تطوير نفسك وتحقيق أهدافك
+                بثقة، والاستعداد لمستقبل أفضل بخطوات واضحة. </h2>
+            <!-- <a href="#" class="btn btn-dark mt-4"> معرفة المزيد </a> -->
+            <div class="images mt-5">
+                <div class="row gx-1 gx-lg-5 align-items-center">
+                    <div class="col-3">
+                        <img src="images/ab1.jpg" alt="">
+                    </div>
+                    <div class="col-4">
+                        <img src="images/ab2.jpg" alt="">
+                    </div>
+                    <div class="col-3">
+                        <img src="images/ab3.jpg" alt="">
+                    </div>
+                    <div class="col-2">
+                        <img src="images/ab4.jpg" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- courses  -->
+    <section class="courses section-padding">
+        <div class="container">
+            <h6 class="sub-title mb-4"> الكورسات </h6>
+            <h2> تصفح كورسات الاكاديمية </h2>
+            <div class="cards">
+                <div class="row">
+                    <div class="col-12 col-lg-3">
+                        <div class="card">
+                            <img src="images/ab1.jpg" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title"> كورس البرمجة </h5>
+                                <p class="card-text"> هذا الكورس يتعلمك كيفية برمجة المواقع الإلكترونية باستخدام لغة
+                                    البرمجة المفتوحة والمستخدمة في العديد من الشركات العالمية. </p>
+                                <a href="#" class="btn btn-dark mt-2"> اشترك الأن </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-3">
+                        <div class="card">
+                            <img src="images/ab2.jpg" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title"> كورس البرمجة </h5>
+                                <p class="card-text"> هذا الكورس يتعلمك كيفية برمجة المواقع الإلكترونية باستخدام لغة
+                                    البرمجة المفتوحة والمستخدمة في العديد من الشركات العالمية. </p>
+                                <a href="#" class="btn btn-dark mt-2"> اشترك الأن </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-3">
+                        <div class="card">
+                            <img src="images/ab3.jpg" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title"> كورس البرمجة </h5>
+                                <p class="card-text"> هذا الكورس يتعلمك كيفية برمجة المواقع الإلكترونية باستخدام لغة
+                                    البرمجة المفتوحة والمستخدمة في العديد من الشركات العالمية. </p>
+                                <a href="#" class="btn btn-dark mt-2"> اشترك الأن </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-3">
+                        <div class="card">
+                            <img src="images/ab4.jpg" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title"> كورس البرمجة </h5>
+                                <p class="card-text"> هذا الكورس يتعلمك كيفية برمجة المواقع الإلكترونية باستخدام لغة
+                                    البرمجة المفتوحة والمستخدمة في العديد من الشركات العالمية. </p>
+                                <a href="#" class="btn btn-dark mt-2"> اشترك الأن </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- events -->
+    <section class="events section-padding">
+        <div class="container">
+            <h6 class="sub-title mb-4"> الفعاليات </h6>
+            <h2> الفعاليات القادمة </h2>
+            <div class="cards">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="img">
+                                <img src="images/ab2.jpg" alt="">
+                            </div>
+                            <div class="card-info">
+                                <div class="date"> 29 October, 2024 </div>
+                                <h4 class="title"> مسابقة فن الرسم </h4>
+                                <div class="place"> <img src="images/icons/location.svg" alt=""> دمياط </div>
+                                <div class="card-btm">
+                                    <div class="users">
+                                        <img src="images/event-4-shape-1.webp" alt="" class="">
+                                    </div>
+                                    <a href="#" class="btn btn-dark"> احجز الأن </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="img">
+                                <img src="images/ab2.jpg" alt="">
+                            </div>
+                            <div class="card-info">
+                                <div class="date"> 29 October, 2024 </div>
+                                <h4 class="title"> مسابقة فن الرسم </h4>
+                                <div class="place"> <img src="images/icons/location.svg" alt=""> دمياط </div>
+                                <div class="card-btm">
+                                    <div class="users">
+                                        <img src="images/event-4-shape-1.webp" alt="" class="">
+                                    </div>
+                                    <a href="#" class="btn btn-dark"> احجز الأن </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="img">
+                                <img src="images/ab2.jpg" alt="">
+                            </div>
+                            <div class="card-info">
+                                <div class="date"> 29 October, 2024 </div>
+                                <h4 class="title"> مسابقة فن الرسم </h4>
+                                <div class="place"> <img src="images/icons/location.svg" alt=""> دمياط </div>
+                                <div class="card-btm">
+                                    <div class="users">
+                                        <img src="images/event-4-shape-1.webp" alt="" class="">
+                                    </div>
+                                    <a href="#" class="btn btn-dark"> احجز الأن </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">
+            <img src="https://swiperjs.com/demos/images/abstract-1.jpg" />
+          </div>
+          <div class="swiper-slide">
+            <img src="https://swiperjs.com/demos/images/abstract-2.jpg" />
+          </div>
+          <div class="swiper-slide">
+            <img src="https://swiperjs.com/demos/images/abstract-3.jpg" />
+          </div>
+          <div class="swiper-slide">
+            <img src="https://swiperjs.com/demos/images/abstract-4.jpg" />
+          </div>
+          <div class="swiper-slide">
+            <img src="https://swiperjs.com/demos/images/abstract-5.jpg" />
+          </div>
+          <div class="swiper-slide">
+            <img src="https://swiperjs.com/demos/images/abstract-6.jpg" />
+          </div>
+          <div class="swiper-slide">
+            <img src="https://swiperjs.com/demos/images/abstract-7.jpg" />
+          </div>
+          <div class="swiper-slide">
+            <img src="https://swiperjs.com/demos/images/abstract-8.jpg" />
+          </div>
+          <div class="swiper-slide">
+            <img src="https://swiperjs.com/demos/images/abstract-9.jpg" />
+          </div>
+        </div>
+        <div class="swiper-pagination"></div>
+      </div> -->
+
+    <!-- footer  -->
+    <footer class="section-padding">
+        <div class="container">
+            <a href="#" class="logo">
+                <img src="images/logo.svg" alt="">
+            </a>
+            <div class="text"> في أكسفورد، نؤمن أن التعليم الحقيقي لا يقتصر على حفظ المعلومات، بل يبدأ بفهمها وتطبيقها
+                وبناء مهارات تدوم معك، لذلك نقدم تجربة تعليمية حديثة تجمع بين المعرفة والتطبيق، لنساعدك على تطوير نفسك
+                وتحقيق أهدافك بثقة، والاستعداد لمستقبل أفضل بخطوات واضحة. </div>
+            <div class="social-icons">
+                <a href="#"> <i class="fa-brands fa-facebook-f"></i> </a>
+                <a href="#"> <i class="fa-brands fa-x-twitter"></i> </a>
+                <a href="#"> <i class="fa-brands fa-instagram"></i> </a>
+            </div>
+        </div>
+    </footer>
+
+    <div class="welcome-popup" id="welcome-popup">
+        <div class="popup-content">
+            <h2>Welcome to our website</h2>
+            <p>Thank you for visiting our website. We hope you find it useful and informative.</p>
+            <button class="close-popup">Close</button>
+        </div>
+    </div>
+
+    <!-- Chatbot -->
+    <div class="chatbot">
+
+        <!-- Chatbot Toggle -->
+        <button class="chatbot-toggle" id="chatbotToggle" type="button">
+            <span class="chatbot-toggle-icon">💬</span>
+        </button>
+
+        <!-- Chatbot Popup -->
+        <div class="chatbot-popup" id="chatbotPopup">
+
+            <!-- Header -->
+            <div class="chatbot-header">
+                <div class="chatbot-header-info">
+                    <div class="chatbot-avatar">AI</div>
+
+                    <div>
+                        <h3>AI Assistant</h3>
+                        <span>Online</span>
+                    </div>
+                </div>
+
+                <button class="chatbot-close" id="chatbotClose" type="button" aria-label="Close chatbot">
+                    &times;
+                </button>
+            </div>
+
+            <!-- Messages -->
+            <div class="chatbot-messages" id="chatbotMessages">
+
+                <div class="chatbot-message chatbot-message-bot">
+                    <div class="chatbot-message-content">
+                        Hello! 👋<br>
+                        How can I help you today?
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Input -->
+            <form class="chatbot-form" id="chatbotForm">
+
+                <input type="text" id="chatbotInput" class="chatbot-input" placeholder="Type your message..."
+                    autocomplete="off">
+
+                <button type="submit" class="chatbot-send" aria-label="Send message">
+                    ➤
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@14.0.1/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+    <script src="js/scripts.js"></script>
+    <!-- Initialize Swiper -->
+    <script>
+        var swiper = new Swiper('.mySwiper', {
+            effect: 'coverflow',
+            grabCursor: true,
+            centeredSlides: true,
+            slidesPerView: '2',
+            speed: 3000,
+            coverflowEffect: {
+                rotate: 50,
+                stretch: 0,
+                depth: 100,
+                modifier: 1,
+                slideShadows: true,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+            },
+        });
+    </script>
+
+    <script>
+        const chatbotToggle = document.getElementById("chatbotToggle");
+const chatbotPopup = document.getElementById("chatbotPopup");
+const chatbotClose = document.getElementById("chatbotClose");
+
+const chatbotForm = document.getElementById("chatbotForm");
+const chatbotInput = document.getElementById("chatbotInput");
+const chatbotMessages = document.getElementById("chatbotMessages");
+
+
+/* Open / Close */
+
+chatbotToggle.addEventListener("click", () => {
+    chatbotPopup.classList.toggle("active");
+});
+
+chatbotClose.addEventListener("click", () => {
+    chatbotPopup.classList.remove("active");
+});
+
+
+/* Add Message */
+
+function addMessage(message, type) {
+
+    const messageElement = document.createElement("div");
+
+    messageElement.classList.add(
+        "chatbot-message",
+        `chatbot-message-${type}`
+    );
+
+    messageElement.innerHTML = `
+        <div class="chatbot-message-content">
+            ${message}
+        </div>
+    `;
+
+    chatbotMessages.appendChild(messageElement);
+
+    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+}
+
+
+/* Send Message */
+
+chatbotForm.addEventListener("submit", async (event) => {
+
+    event.preventDefault();
+
+    const message = chatbotInput.value.trim();
+
+    if (!message) return;
+
+    // Show user message
+    addMessage(message, "user");
+
+    chatbotInput.value = "";
+
+    try {
+
+        const response = await fetch(
+            "http://127.0.0.1:5000/api/chat",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    message: message
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (data.reply) {
+
+            addMessage(data.reply, "bot");
+
+        } else {
+
+            addMessage(
+                "Sorry, something went wrong.",
+                "bot"
+            );
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        addMessage(
+            "Unable to connect to the server.",
+            "bot"
+        );
+    }
+
+});
+    </script>
+
+</body>
+
+</html>
